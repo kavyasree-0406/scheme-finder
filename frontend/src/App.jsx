@@ -173,8 +173,9 @@ export default function App() {
         headers["X-Gemini-Key"] = customApiKey;
       }
 
+      const apiBaseUrl = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
       const res = await axios.post(
-        "http://127.0.0.1:8000/find-schemes", 
+        `${apiBaseUrl}/find-schemes`, 
         { ...profile, age: parsedAge },
         { headers }
       )

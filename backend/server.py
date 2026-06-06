@@ -1,8 +1,9 @@
 import sys
 import os
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from typing import Optional
 import uvicorn
 
 # Add the directory containing this script to the Python path
@@ -32,13 +33,13 @@ class Profile(BaseModel):
     goal: str
 
 @app.post("/find-schemes")
-async def find_schemes_endpoint(profile: Profile):
+async def find_schemes_endpoint(profile: Profile, x_gemini_key: Optional[str] = Header(None)):
     try:
         profile_dict = profile.model_dump()
-        result = find_schemes(profile_dict)
+        result = find_schemes(profile_dict, client_api_key=x_gemini_key)
         return {"schemes": result}
     except Exception as e:
-        print(f"Error finding schemes: {e}")
+        print(f"Error finding schemes in endpoint: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
